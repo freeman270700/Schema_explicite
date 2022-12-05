@@ -18,13 +18,14 @@ for i in range(0,Nt+1):
     u[0, i] = 15 - 10 * sin(2*pi*temp[i]/12)
 maxiter = 500
 for iter in range(0 , maxiter) : 
-    uold = u
-    u[:,0] = uold[:,-1]
+    uold = u.copy()
+    u[:,0] = uold[:,Nt]
     for i in range(1, Nt+1):
-        profondeur = ((u[0:(Nz-2),i-1]) - 2*(u[1:(Nz-1),i-1]) + (u[2:(Nz),i-1]))/dz**2
+        #profondeur[i] = ((u[0:(Nz-2),i-1]) - 2*(u[1:(Nz-1),i-1]) + (u[2:(Nz),i-1]))/dz**2
         temps_1D = K*profondeur  
         u[1:Nz-2,i] = dt*temps_1D[1:Nz-2] + u[1:Nz-2,i-1] 
         u[Nz-1,i] = u[Nz-2,i]
+        
     #trouver le maximum en valeur absolue entre deux solutions u et uold
     diff = np.max(np.abs(u-uold))
     if(diff < 1e-4):
@@ -36,7 +37,7 @@ for iter in range(0 , maxiter) :
 plt.figure()
 #mettre les abscisses en fcontion du temps et les ordonnées en fonction de la temperature
 
-print(u[2,:])
+print(u[0:(Nz-2),0])
 #mettre les ordonnées entre 0 et 15
 plt.ylabel('Température (°C)')
 plt.plot(temp,u[0,:], 'r')
