@@ -7,33 +7,31 @@ import numpy as np
 from numpy import nbytes, zeros,array,dot,linspace, linalg
 from math import *
 import matplotlib.pyplot as plt
+import time
 
 start_time = time.time()
 K = 2*10**-6
 dz = 0.25
 Nz = 400
 Nt = 5000
-dt = (365*24*60*60)/Nt
-u = np.ones((Nz+1, Nt+1))
-#affiche la taille de temp
-temp = np.linspace(0,12,Nt+1)
-u = 15 * u
-#pour i allant de 0 à Nt
-for i in range(0,Nt+1):
-    u[0, i] = 15 - 10 * sin(2*pi*temp[i]/12)
+dt = (365*24*3600)/Nt
+temps = np.linspace(0, 12, Nt+1)
+u = 15 * np.ones((Nz+1, Nt+1))
+u[0, :] = 15 - 10*np.sin(2*np.pi*temps/12)
 maxiter = 500
-for iter in range(0 , maxiter) : 
-    uold = u.copy()
-    u[:,0] = uold[:,Nt]
+err = np.ones(maxiter) # Initialize err with larger values
+
+for iter in range(maxiter):
+    uold = u.copy()  # Store the original value of u in a temporary array
+    u[:, 0] = uold[:, -1]
     for i in range(1, Nt+1):
-        #profondeur[i] = ((u[0:(Nz-2),i-1]) - 2*(u[1:(Nz-1),i-1]) + (u[2:(Nz),i-1]))/dz**2
-        temps_1D = K*profondeur  
-        u[1:Nz-2,i] = dt*temps_1D[1:Nz-2] + u[1:Nz-2,i-1] 
-        u[Nz-1,i] = u[Nz-2,i]
+        profondeur = (u[0:len(u)-2, i-1]-2*u[1:len(u)-1, i-1]+u[2:len(u), i-1])/dz**2
+        temps_1D = K*profondeur
+        u[1:len(u)-1, i] = temps_1D*dt + u[1:len(u)-1, i-1]
+        u[-1, i] = u[-2, i]
         
-    #trouver le maximum en valeur absolue entre deux solutions u et uold
-    diff = np.max(np.abs(u-uold))
-    if(diff < 1e-4):
+    err[iter] = np.max(np.abs(u-uold))  # Calculate error using the original value of u
+    if err[iter] < 1E-4:
         break
 
 
