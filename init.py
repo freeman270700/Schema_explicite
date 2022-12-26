@@ -19,10 +19,10 @@ temps = np.linspace(0, 12, Nt+1)
 u = 15 * np.ones((Nz+1, Nt+1))
 u[0, :] = 15 - 10*np.sin(2*np.pi*temps/12)
 maxiter = 500
-err = np.ones(maxiter) # Initialize err with larger values
+err = np.ones(maxiter) # Initialise les valeurs de erreurs à 1
 
 for iter in range(maxiter):
-    uold = u.copy()  # Store the original value of u in a temporary array
+    uold = u.copy()  # Sauvegarde la valeur de u dans uold
     u[:, 0] = uold[:, -1]
     for i in range(1, Nt+1):
         profondeur = (u[0:len(u)-2, i-1]-2*u[1:len(u)-1, i-1]+u[2:len(u), i-1])/dz**2
@@ -30,15 +30,10 @@ for iter in range(maxiter):
         u[1:len(u)-1, i] = temps_1D*dt + u[1:len(u)-1, i-1]
         u[-1, i] = u[-2, i]
         
-    err[iter] = np.max(np.abs(u-uold))  # Calculate error using the original value of u
+    err[iter] = np.max(np.abs(u-uold))  # Calcul l'erreur absolue entre u et uold
     if err[iter] < 1E-4:
         break
 
-
-
-#afficher valeur err
-#sortie graphique variation de la température en fonction de la profondeur
-# Graphe de Convergence
 
 # Graphe de Convergence
 plt.figure(1)
@@ -75,6 +70,6 @@ plt.show()
 end_time = time.time()
 # Calcul du temps d'exécution en secondes
 elapsed_time = end_time - start_time
-print(f"Temps d'exécution : {elapsed_time:.2f} secondes")
+print(f"Temps d'execution : {elapsed_time:.2f} secondes")
 
 
